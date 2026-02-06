@@ -183,7 +183,7 @@ class TIKTOK:
 import random
 import requests
 
-DEVICES_URL = "https://raw.githubusercontent.com/carlanunes1525-cyber/TikTok_Available/main/hdo/device.txt"
+DEVICES_URL = "https://raw.githubusercontent.com/tikforge-api/tikforge/refs/heads/main/tikforge/devices.txt"
 
 def load_device():
     try:
