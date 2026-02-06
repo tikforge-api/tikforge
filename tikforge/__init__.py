@@ -213,11 +213,10 @@ def load_device():
 
     return iid, did, device_type, device_brand, os_version, openudid, cdid
 
-
- 
 def CheckTikTok(email, sessionid):
     iid, did, device_type, device_brand, os_version, openudid, cdid = load_device()
-    url = "https://api22-normal-c-alisg.tiktokv.com/passport/email/bind_with_email/"
+
+    url = "https://api22-normal-c-alisg.tiktokv.com/passport/email/bind_without_verify/"
 
     params = {
         "passport-sdk-version": "19",
@@ -272,15 +271,15 @@ def CheckTikTok(email, sessionid):
     }
 
     payload = {
-        'account_sdk_source': 'app',
-        'multi_login': '1',
-        'email_source': '9',
-        'email': email,
-        'mix_mode': '1'
+        "account_sdk_source": "app",
+        "multi_login": "1",
+        "email_source": "9",
+        "email": email,
+        "mix_mode": "1"
     }
 
-    headers = {   
-        'user-agent': f'com.zhiliaoapp.musically/310905 (Linux; U; Android {os_version}; en_ma; {device_type}; Build/RP1A.200720.012;tt-ok/3.12.13.4-tiktok)',
+    headers = {
+        "user-agent": f"com.zhiliaoapp.musically/310905 (Linux; U; Android {os_version}; en_ma; {device_type}; Build/RP1A.200720.012;tt-ok/3.12.13.4-tiktok)",
         "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
         "cookie": f"sessionid={sessionid}",
         "sdk-version": "2",
@@ -288,26 +287,48 @@ def CheckTikTok(email, sessionid):
         "x-ss-dp": "1233",
     }
 
+    sec_device_id = "AadCFwpTyztA5j9L" + "".join(
+        secrets.choice(string.ascii_letters + string.digits) for _ in range(9)
+    )
 
-    sec_device_id = "AadCFwpTyztA5j9L" + ''.join(secrets.choice(string.ascii_letters + string.digits) for _ in range(9))
-    headers.update(TIKTOK.sign(urlencode(params), urlencode(payload), sec_device_id, None, 1233))
-    
+    headers.update(
+        TIKTOK.sign(urlencode(params), urlencode(payload), sec_device_id, None, 1233)
+    )
+
     try:
-        res = requests.post(url, params=params, data=payload, headers=headers)
+        res = requests.post(url, params=params, data=payload, headers=headers, timeout=15)
         response_json = res.json()
-        errur_code = response_json.get('data', {}).get('error_code')
-        description = response_json.get('data', {}).get("description")
-        
-        if int(errur_code) == 1023:
-        	return{"data":{"status":description,"error_code":errur_code,"programmer":"@is71s"}}
-        elif int(errur_code) == 1:
-            return{"data":{"status":description,"error_code":errur_code,"programmer":"@is71s"}}
-        else:
-            return{"data":{"status":description,"error_code":errur_code,"programmer":"@is71s"}}
-    
-    except Exception as e:
-        return{"data":{"status":"Error {}".format(e),"programmer":"@is71s"}}
 
+        data = response_json.get("data", {})
+        errur_code = data.get("error_code")
+        description = data.get("description", "No description")
+
+        if errur_code is None:
+            return {
+                "data": {
+                    "status": "Unknown response",
+                    "raw": response_json,
+                    "programmer": "@is71s"
+                }
+            }
+
+        errur_code = int(errur_code)
+
+        return {
+            "data": {
+                "status": description,
+                "error_code": errur_code,
+                "programmer": "@is71s"
+            }
+        }
+
+    except Exception as e:
+        return {
+            "data": {
+                "status": f"Error {e}",
+                "programmer": "@is71s"
+            }
+    }
 
 class TIKTOK_INFO_V2:
     @staticmethod
