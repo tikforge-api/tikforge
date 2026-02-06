@@ -1,24 +1,39 @@
 [build-system]
-requires = ["setuptools>=61.0"]
+requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "tikforge"
-version = "0.0.2"
-description = "TikForge: TikTok API and automation toolkit"
+version = "0.0.6"
+description = "TikTok private API utilities"
 readme = "README.md"
 requires-python = ">=3.8"
 license = { text = "MIT" }
-
 authors = [
-  { name = "TikForge", email = "hdo.tikto@gmail.com" }
+    { name = "is71s", email = "is71s@users.noreply.github.com" }
+]
+
+keywords = ["tiktok", "api", "automation", "security"]
+
+dependencies = [
+    "requests",
+    "user-agent",
+    "pycryptodome"
 ]
 
 classifiers = [
-  "Programming Language :: Python :: 3",
-  "License :: OSI Approved :: MIT License",
-  "Operating System :: OS Independent"
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent"
 ]
+
+[project.urls]
+Homepage = "https://github.com/tikforge-api/tikforge"
+Source = "https://github.com/tikforge-api/tikforge"
+Issues = "https://github.com/tikforge-api/tikforge/issues"
 
 [tool.setuptools]
 packages = ["tikforge"]
+
+[tool.setuptools.package-data]
+tikforge = ["devices.txt"]
